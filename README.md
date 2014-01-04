@@ -3,6 +3,8 @@ freeze-flip
 
 Freeze is a pretty simple, yet powerful feature flipper, powered by Redis.
 
+![](https://i.cloudup.com/VWPQ9PulP6.png)
+
 ## Usage
 
 ```js
