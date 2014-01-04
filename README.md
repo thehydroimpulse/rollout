@@ -26,7 +26,7 @@ feature.isEnabled('feature_name').then(function(enabled)
 
 ## Defining Features
 
-Because Redis is not persistent &mdash; and for this usecase, it shouldn't need to be &mdash; we need a way to easily define these features and re-allocate them. This allows you to re-define the features whenever your application launches, or whenever you deploy. It only creates entries that do not currently exist. By default, newly defined features will be disabled.
+Because Redis is not persistent &mdash; and for this usecase, it shouldn't need to be &mdash; we need a way to easily define these features and re-allocate them. This allows you to re-define the features whenever your application launches, or when you deploy. It only creates entries that do not currently exist. By default, newly defined features will be disabled.
 
 ```js
 freeze.define('feature_name');
