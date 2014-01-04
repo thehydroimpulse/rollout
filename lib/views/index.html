@@ -1,0 +1,44 @@
+{{!< layout}}
+
+<h1>Freeze</h1>
+
+{{#if messages}}
+<section class="notifications">
+  {{#if messages.error}}
+    <div class="notification error">
+      <span class="icon"><i class="fa fa-exclamation-circle"></i></span>
+      <span class="message">{{messages.error}}</span>
+      <span class="close"></span>
+    </div>
+  {{/if}}
+
+  {{#if messages.success}}
+    <div class="notification success">
+      <span class="icon"><i class="fa fa-exclamation-circle"></i></span>
+      <span class="message">{{messages.success}}</span>
+      <span class="close"></span>
+    </div>
+  {{/if}}
+
+  {{#if messages.info}}
+    <div class="notification info">
+      <span class="icon"><i class="fa fa-exclamation-circle"></i></span>
+      <span class="message">{{messages.info}}</span>
+      <span class="close"></span>
+    </div>
+  {{/if}}
+</section>
+{{/if}}
+
+<div class="features">
+<table>
+{{#each features}}
+  <tr class="feature">
+    <td width="250px"><span class="name">{{name}}</span></td>
+    <td>
+    <span class="{{status}}">{{status}}</span> <span class="flip-link"><a href="/flip/{{name}}">Flip</a></span>
+    </td>
+  </tr>
+{{/each}}
+</div>
+</div>
