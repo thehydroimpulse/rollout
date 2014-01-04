@@ -1,0 +1,8 @@
+{
+  "name": "freeze-flip",
+  "version": "0.0.1",
+  "dependencies": {
+    "redis": "*",
+    "bluebird": "~0.11.6-0"
+  }
+}
