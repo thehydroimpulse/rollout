@@ -1,4 +1,4 @@
-freeze-flip
+Freeze
 ===========
 
 Freeze is a pretty simple, yet powerful feature flipper, powered by Redis.
