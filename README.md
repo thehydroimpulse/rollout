@@ -3,6 +3,41 @@
 
 # Rollout
 
+Inspired by the [Ruby library Rollout](https://github.com/FetLife/rollout).
+
+
+## Install
+
+You can grab Rollout through Npm:
+
+```
+npm install rollout
+```
+
+Simply require it:
+
+```js
+var Rollout = require('rollout');
+```
+
+## Getting Started
+
+Rollout is a Redis-backed feature rollout. This allows you to, dynamically, control each feature within your Node application. Because it's backed by Redis, it allows you to manually control each feature, resulting in an effort-less mechanism to shutdown malfunctioning features, or rolling out a new feature to users.
+
+```js
+var Rollout = require('rollout');
+```
+
+This exports the `Rollout` constructor. There's an alias function called `.create` to instantiate a new Rollout.
+
+```js
+var Rollout = require('rollout');
+Rollout.create(); // New instance.
+```
+
+You may pass a custom Redis client instance to both the constructor `new Rollout(redis)` or the `.create` method `Rollout.create(redis)`.
+
+
 ## License
 
 The MIT License (MIT)
