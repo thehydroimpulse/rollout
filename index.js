@@ -76,8 +76,10 @@ Rollout.prototype.isActiveUser = function(feature, id) {
 
       if (result === 'enabled') {
         resolve(true);
-      } else {
+      } else if (result === 'disabled') {
         resolve(false);
+      } else {
+        resolve(null);
       }
     });
   });
@@ -106,7 +108,7 @@ Rollout.prototype.active = function(feature, id) {
     return this.isActive(feature);
   } else {
     return this.isActive(feature).then(function(enabled) {
-      if (enabled) {
+      if (enabled || enabled == null) {
         return self.isActiveUser(feature, id);
       }
 

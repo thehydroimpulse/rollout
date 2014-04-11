@@ -74,6 +74,19 @@ rollout.activateUser('newFeature', userId).then(function() {
 This activated the `newFeature` feature for the given user.
 
 
+Moreover, you may then deactivate a feature:
+
+```js
+rollout.deactivateUser('newFeature', userId).then(function() {
+	// ...
+});
+```
+
+### Global
+
+For any method, Rollout checks the global feature first. If we find that feature enabled, we can further check the feature for that specific user (if one is given).
+
+
 ## License
 
 The MIT License (MIT)
