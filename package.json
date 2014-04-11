@@ -24,9 +24,14 @@
     "redis": "^0.10.1"
   },
   "devDependencies": {
-    "mocha": "^1.18.2"
+    "blanket": "^1.1.6",
+    "coveralls": "^2.10.0",
+    "istanbul": "^0.2.7",
+    "jscover": "^0.2.4",
+    "mocha": "^1.18.2",
+    "mocha-lcov-reporter": "0.0.1"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "./node_modules/mocha/bin/mocha && ./coverage.sh"
   }
 }

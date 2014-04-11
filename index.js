@@ -1,8 +1,13 @@
 var redis   = require('redis');
 var Promise = require('bluebird');
-var app     = require('./lib/app');
 
 exports = module.exports = Rollout;
+
+/**
+ * An optional helper for creating a new Rollout instance.
+ *
+ * @param {Redis} redis A redis instance.
+ */
 
 exports.create = function(redis) {
   return new Rollout(redis);
@@ -10,17 +15,19 @@ exports.create = function(redis) {
 
 /**
  * Export the express app;
+ *
+ * @param {Rollout} instance A Rollout instance.
+ * @return {App} An express app instance.
  */
 
 exports.createApp = function(instance) {
-  return app(instance);
+  //return app(instance);
 };
 
 /**
  * Rollout constructor.
  *
- *  `feature_status`
- *
+ * @param {Redis} client A redis instance.
  */
 
 function Rollout(client) {
@@ -28,12 +35,26 @@ function Rollout(client) {
   this.client = client;
 }
 
+/**
+ * Check whether a feature is activated or not. An optional user ID can be provided
+ * to bind the feature to that user.
+ *
+ * By default, we check the global status of the feature. If that returns false,
+ * we can further check for the provided user, only if it's provided.
+ *
+ * @param {String} feature
+ * @param {String/Integer} id
+ * @return {Promise}
+ */
 
-Rollout.prototype.isEnabled = function(feature) {
-  var self = this;
+Rollout.prototype.active = function(feature, id) {
+
+  if (!id && !feature) {
+    throw new Error("The .active() method needs at least a feature name as it's first parameter.");
+  }
 
   return new Promise(function(resolve, reject) {
-    self.client.hget('feature_status', feature, function(err, result) {
+    this.client.hget('feature_rollout_global', feature, function(err, result) {
       if (err) {
         return reject(err);
       }
@@ -51,7 +72,7 @@ Rollout.prototype.isEnabled = function(feature) {
       }
 
     });
-  });
+  }.bind(this));
 };
 
 Rollout.prototype.enable = function(feature) {
