@@ -24,9 +24,7 @@ exports.createApp = function(instance) {
  */
 
 function Rollout(client) {
-  if (!client) {
-    throw new Error("The Rollout constructor requires a redis client as a parameter.");
-  }
+  if (!client) client = redis.createClient();
   this.client = client;
 }
 
