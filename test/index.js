@@ -206,6 +206,39 @@ describe('rollout', function() {
 
       assert.equal('function', typeof rollout.group);
     });
+
+    it('should throw an error when calling .group() without any params.', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.group();
+      }, Error);
+    });
+
+    it('should throw an error when calling .group() with too many params.', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.group(1,2,3,4);
+      }, Error);
+    });
+
+    it('should not throw when calling .group() with two params', function() {
+      var rollout = Rollout.create();
+
+      assert.doesNotThrow(function() {
+        rollout.group('all', function() {});
+      });
+    });
+
+    it('should throw an error when the second param to .group() isn\'t a function', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.group('all', 123);
+      }, Error);
+    });
+
   });
 
 });
