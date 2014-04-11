@@ -1,11 +1,32 @@
 {
   "name": "rollout",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "author": "Daniel Fagnan <dnfagnan@gmail.com>",
+  "description": "A redis-backed feature rollout system.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheHydroImpulse/rollout.git"
+  },
+  "keywords": [
+    "rollout",
+    "feature",
+    "feature rollout",
+    "feature flipper",
+    "toggle",
+    "feature toggle"
+  ],
+  "license": "MIT",
   "dependencies": {
     "bluebird": "~0.11.6-0",
     "express": "~3.4.7",
     "express-flash": "0.0.2",
     "express-hbs": "~0.5.2",
     "redis": "^0.10.1"
+  },
+  "devDependencies": {
+    "mocha": "^1.18.2"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
   }
 }
