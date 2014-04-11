@@ -1,5 +1,6 @@
 var Rollout = require('..');
 var assert  = require('assert');
+var Promise = require('bluebird');
 
 describe('rollout', function() {
 
@@ -40,6 +41,12 @@ describe('rollout', function() {
     assert.doesNotThrow(function() {
       rollout.active('foo');
     }, "Expected .active() to have an *optional* user ID argument.");
+  });
+
+  it('should return a new promise when calling .active()', function() {
+    var rollout = Rollout.create();
+
+    assert(rollout.active('foo') instanceof Promise);
   });
 
 });

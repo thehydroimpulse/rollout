@@ -20,8 +20,7 @@ exports.create = function(redis) {
  */
 
 function Rollout(client) {
-  if (!client) client = redis.createClient();
-  this.client = client;
+  this.client = client || redis.createClient();
 }
 
 /**
@@ -37,13 +36,14 @@ function Rollout(client) {
  */
 
 Rollout.prototype.active = function(feature, id) {
+  var self = this;
 
   if (arguments.length === 0) {
     throw new Error("The .active() method needs at least a feature name as it's first parameter.");
   }
 
   return new Promise(function(resolve, reject) {
-    this.client.hget('feature_rollout_global', feature, function(err, result) {
+    self.client.hget('feature_rollout_global', feature, function(err, result) {
       if (err) {
         return reject(err);
       }
@@ -61,5 +61,5 @@ Rollout.prototype.active = function(feature, id) {
       }
 
     });
-  }.bind(this));
+  });
 };
