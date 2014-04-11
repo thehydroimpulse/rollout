@@ -21,7 +21,17 @@ exports.create = function(redis) {
 
 function Rollout(client) {
   this.client = client || redis.createClient();
+  this._id = 'id';
 }
+
+/**
+ * Let Rollout know which key the id is on a user object.
+ */
+
+Rollout.prototype.id = function(id) {
+  this._id = id;
+  return this;
+};
 
 /**
  * Check globally whether a feature is activated or not.
@@ -148,24 +158,56 @@ Rollout.prototype.activateUser = function(feature, user) {
  * Deactive a feature for a given user.
  *
  * @param {String} feature
- * @param {String/Integer} user
+ * @param {String/Integer/Object} user
  * @return {Promise}
  */
 
 Rollout.prototype.deactivateUser = function(feature, user) {
   var self = this;
+  var id   = user;
 
   if (arguments.length < 2) {
     throw new Error(".activateUser() requires at least two parameters.");
   }
 
+  if ('object' === typeof user) {
+    id = user[this._id];
+  }
+
   return new Promise(function(resolve, reject) {
-    self.client.hset('rollout:user:' + user, feature, 'disabled', function(err) {
+    self.client.hset('rollout:user:' + id, feature, 'disabled', function(err) {
       if (err) {
         return reject(err);
       }
 
       resolve();
+    });
+  });
+};
+
+/**
+ * Define a new group.
+ *
+ * @param {String} name The group name.
+ * @param {Function} fn Callback.
+ */
+
+Rollout.prototype.group = function(name, fn) {
+  var self = this;
+
+  if (arguments.length !== 2) {
+    throw new Error(".group() expected 2 parameters.");
+  }
+
+  if ('function' !== typeof fn) {
+    throw new Error("Expected .group()'s second param to be a function.");
+  }
+
+  return new Promise(function(resolve, reject) {
+    self.client.sadd('rollout:groups', name, function(err, result) {
+      if (err) {
+        return reject(err);
+      }
     });
   });
 };

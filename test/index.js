@@ -4,22 +4,39 @@ var Promise = require('bluebird');
 
 describe('rollout', function() {
 
-  it('should return a function', function() {
-    assert.equal('function', typeof Rollout);
-  });
+  describe('constructor', function() {
+    it('should return a function', function() {
+      assert.equal('function', typeof Rollout);
+    });
 
-  it('should return a .create function', function() {
-    assert.equal('function', typeof Rollout.create);
-  });
+    it('should return a .create function', function() {
+      assert.equal('function', typeof Rollout.create);
+    });
 
-  it('should default to a local Redis instance when one isn\'t provided', function() {
-    assert.doesNotThrow(function() {
-      var rollout = new Rollout();
-    }, "Expected Rollout() to default to a local Redis instance.");
-  });
+    it('should default to a local Redis instance when one isn\'t provided', function() {
+      assert.doesNotThrow(function() {
+        var rollout = new Rollout();
+      }, "Expected Rollout() to default to a local Redis instance.");
+    });
 
-  it('should create a new Rollout instance w/ .create()', function() {
-    assert(Rollout.create() instanceof Rollout);
+    it('should create a new Rollout instance w/ .create()', function() {
+      assert(Rollout.create() instanceof Rollout);
+    });
+
+    it('should have a default user id of "id"', function() {
+      assert.equal(Rollout.create()._id, 'id');
+    });
+
+    it('should define a custom id', function() {
+      var rollout = Rollout.create();
+      rollout.id('foo');
+      assert.equal(rollout._id, 'foo');
+    });
+
+    it('should return a chainable interface (.id())', function() {
+      var rollout = Rollout.create();
+      assert(rollout.id() instanceof Rollout);
+    });
   });
 
   describe('.active()', function() {
@@ -180,6 +197,15 @@ describe('rollout', function() {
       });
     });
 
+  });
+
+
+  describe('groups', function() {
+    it('should define a .group() method', function() {
+      var rollout = Rollout.create();
+
+      assert.equal('function', typeof rollout.group);
+    });
   });
 
 });
