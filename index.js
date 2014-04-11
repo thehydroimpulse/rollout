@@ -1,16 +1,12 @@
-/**
- * Module dependencies.
- */
-
-var redis = require('redis');
+var redis   = require('redis');
 var Promise = require('bluebird');
-var app = require('./lib/app');
+var app     = require('./lib/app');
 
-/**
- * Module exports.
- */
+exports = module.exports = Rollout;
 
-exports = module.exports = Flip;
+exports.create = function(redis) {
+  return new Rollout(redis);
+};
 
 /**
  * Export the express app;
@@ -21,30 +17,24 @@ exports.createApp = function(instance) {
 };
 
 /**
- * Flip constructor.
+ * Rollout constructor.
  *
  *  `feature_status`
  *
  */
 
-function Flip(options) {
-  if (!options) options = {};
-  this.host = options.host;
-  this.port = options.port;
-  this.username = options.username;
-  this.password = options.password;
-  this.client = redis.createClient(this.port || 6379, this.host || '127.0.0.1');
+function Rollout(client) {
+  if (!client) {
+    throw new Error("The Rollout constructor requires a redis client as a parameter.");
+  }
+  this.client = client;
 }
 
-/**
- * featureEnabled?
- */
 
-Flip.prototype.isEnabled = function(feature) {
+Rollout.prototype.isEnabled = function(feature) {
   var self = this;
 
-  return new Promise(function(resolve, reject)
-  {
+  return new Promise(function(resolve, reject) {
     self.client.hget('feature_status', feature, function(err, result) {
       if (err) {
         return reject(err);
@@ -64,18 +54,12 @@ Flip.prototype.isEnabled = function(feature) {
 
     });
   });
-
 };
 
-/**
- * Enable
- */
-
-Flip.prototype.enable = function(feature) {
+Rollout.prototype.enable = function(feature) {
   var self = this;
 
-  return new Promise(function(resolve, reject)
-  {
+  return new Promise(function(resolve, reject) {
     self.client.hset(['feature_status', feature, 'enabled'], function(err, r) {
       return resolve();
     });
@@ -83,32 +67,21 @@ Flip.prototype.enable = function(feature) {
 };
 
 
-/**
- * Disable
- */
-
-Flip.prototype.disable = function(feature) {
+Rollout.prototype.disable = function(feature) {
   var self = this;
 
-  return new Promise(function(resolve, reject)
-  {
+  return new Promise(function(resolve, reject) {
     self.client.hset(['feature_status', feature, 'disabled'], function(err) {
       return resolve();
     });
   });
 };
 
-/**
- * List Features
- */
-
-Flip.prototype.list = function() {
+Rollout.prototype.list = function() {
   var self = this;
 
-  return new Promise(function(resolve, reject)
-  {
-    self.client.hgetall('feature_status', function(err, keys)
-    {
+  return new Promise(function(resolve, reject) {
+    self.client.hgetall('feature_status', function(err, keys) {
       if (err) {
         return reject(err);
       }
@@ -118,21 +91,15 @@ Flip.prototype.list = function() {
   });
 };
 
-/**
- * Flip
- */
 
-Flip.prototype.flip = function(feature) {
+Rollout.prototype.flip = function(feature) {
   var self = this;
 
-  return new Promise(function(resolve, reject)
-  {
+  return new Promise(function(resolve, reject) {
     // Get the current value;
-    self.isEnabled(feature).then(function(enabled)
-    {
+    self.isEnabled(feature).then(function(enabled) {
       if (enabled) {
-        return self.disable(feature).then(function()
-        {
+        return self.disable(feature).then(function() {
           return resolve('enabled');
         });
       } else {
@@ -145,19 +112,13 @@ Flip.prototype.flip = function(feature) {
   });
 };
 
-/**
- * Define
- */
-
-Flip.prototype.define = function(feature, def) {
+Rollout.prototype.define = function(feature, def) {
   var self = this;
 
   if (!def) def = false;
 
-  return new Promise(function(resolve, reject)
-  {
-    self.client.hget('feature_status', feature, function(err, result)
-    {
+  return new Promise(function(resolve, reject) {
+    self.client.hget('feature_status', feature, function(err, result) {
       if (result == null) {
         if (def === false) {
           return self.disable(feature).then(resolve);
