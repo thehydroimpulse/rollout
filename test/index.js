@@ -34,4 +34,12 @@ describe('rollout', function() {
 
   });
 
+  it('should allow a call to .active() without a user ID.', function() {
+    var rollout = Rollout.create();
+
+    assert.doesNotThrow(function() {
+      rollout.active('foo');
+    }, "Expected .active() to have an *optional* user ID argument.");
+  });
+
 });
