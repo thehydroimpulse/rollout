@@ -14,17 +14,6 @@ exports.create = function(redis) {
 };
 
 /**
- * Export the express app;
- *
- * @param {Rollout} instance A Rollout instance.
- * @return {App} An express app instance.
- */
-
-exports.createApp = function(instance) {
-  //return app(instance);
-};
-
-/**
  * Rollout constructor.
  *
  * @param {Redis} client A redis instance.
@@ -73,78 +62,4 @@ Rollout.prototype.active = function(feature, id) {
 
     });
   }.bind(this));
-};
-
-Rollout.prototype.enable = function(feature) {
-  var self = this;
-
-  return new Promise(function(resolve, reject) {
-    self.client.hset(['feature_status', feature, 'enabled'], function(err, r) {
-      return resolve();
-    });
-  });
-};
-
-
-Rollout.prototype.disable = function(feature) {
-  var self = this;
-
-  return new Promise(function(resolve, reject) {
-    self.client.hset(['feature_status', feature, 'disabled'], function(err) {
-      return resolve();
-    });
-  });
-};
-
-Rollout.prototype.list = function() {
-  var self = this;
-
-  return new Promise(function(resolve, reject) {
-    self.client.hgetall('feature_status', function(err, keys) {
-      if (err) {
-        return reject(err);
-      }
-
-      resolve(keys);
-    });
-  });
-};
-
-
-Rollout.prototype.flip = function(feature) {
-  var self = this;
-
-  return new Promise(function(resolve, reject) {
-    // Get the current value;
-    self.isEnabled(feature).then(function(enabled) {
-      if (enabled) {
-        return self.disable(feature).then(function() {
-          return resolve('enabled');
-        });
-      } else {
-        return self.enable(feature).then(function()
-        {
-          return resolve('disabled');
-        });
-      }
-    });
-  });
-};
-
-Rollout.prototype.define = function(feature, def) {
-  var self = this;
-
-  if (!def) def = false;
-
-  return new Promise(function(resolve, reject) {
-    self.client.hget('feature_status', feature, function(err, result) {
-      if (result == null) {
-        if (def === false) {
-          return self.disable(feature).then(resolve);
-        } else {
-          return self.enable(feature).then(resolve);
-        }
-      }
-    });
-  });
 };

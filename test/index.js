@@ -21,4 +21,8 @@ describe('rollout', function() {
     assert(Rollout.create() instanceof Rollout);
   });
 
+  it('should have an .active() method', function() {
+    assert.equal('function', typeof Rollout.create().active);
+  });
+
 });
