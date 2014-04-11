@@ -259,6 +259,24 @@ describe('rollout', function() {
       });
     });
 
+    it('should add a default group of all', function(done) {
+      var rollout = Rollout.create();
+
+      setTimeout(function() {
+        rollout.client.sismember('rollout:groups', 'all', function(err, result) {
+          if (err) {
+            return done(err);
+          }
+
+          if (result == '1') {
+            done();
+          } else {
+            done(err);
+          }
+        });
+      }, 10);
+    });
+
   });
 
 });

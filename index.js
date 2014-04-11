@@ -22,6 +22,7 @@ exports.create = function(redis) {
 function Rollout(client) {
   this.client = client || redis.createClient();
   this._id = 'id';
+  this.group('all', function(user) { return true; });
 }
 
 /**
