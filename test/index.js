@@ -25,4 +25,13 @@ describe('rollout', function() {
     assert.equal('function', typeof Rollout.create().active);
   });
 
+  it('should throw an error when calling .active() without any arguments', function() {
+    var rollout = Rollout.create();
+
+    assert.throws(function() {
+      rollout.active();
+    }, Error);
+
+  });
+
 });

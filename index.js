@@ -38,7 +38,7 @@ function Rollout(client) {
 
 Rollout.prototype.active = function(feature, id) {
 
-  if (!id && !feature) {
+  if (arguments.length === 0) {
     throw new Error("The .active() method needs at least a feature name as it's first parameter.");
   }
 
