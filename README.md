@@ -1,4 +1,7 @@
-# Rollout [![Build Status](https://travis-ci.org/TheHydroImpulse/rollout.svg?branch=master)](https://travis-ci.org/TheHydroImpulse/rollout) [![NPM version](https://badge.fury.io/js/rollout.svg)](http://badge.fury.io/js/rollout) [![Release alpha](http://img.shields.io/badge/release-alpha-red.svg)](https://github.com/TheHydroImpulse/rollout)
+[![Build Status](https://travis-ci.org/TheHydroImpulse/rollout.svg?branch=master)](https://travis-ci.org/TheHydroImpulse/rollout) [![NPM version](https://badge.fury.io/js/rollout.svg)](http://badge.fury.io/js/rollout) [![Release alpha](http://img.shields.io/badge/release-alpha-red.svg)](https://github.com/TheHydroImpulse/rollout) [![Coverage Status](https://coveralls.io/repos/TheHydroImpulse/rollout/badge.png?branch=master)](https://coveralls.io/r/TheHydroImpulse/rollout?branch=master)
+
+
+# Rollout
 
 ## License
 
