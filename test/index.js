@@ -117,7 +117,7 @@ describe('rollout', function() {
 
 
   describe('activate user', function() {
-    it('should define a .activateUser() method', function() {
+    it('should define an .activateUser() method', function() {
       var rollout = Rollout.create();
 
       assert.equal('function', typeof rollout.activateUser);
@@ -143,6 +143,39 @@ describe('rollout', function() {
         return rollout.isActiveUser('FooBar', 10);
       }).then(function(enabled) {
         assert.equal(enabled, true);
+        done();
+      });
+    });
+
+  });
+
+  describe('deactivate user', function() {
+    it('should define an .deactivateUser() method', function() {
+      var rollout = Rollout.create();
+
+      assert.equal('function', typeof rollout.deactivateUser);
+    });
+
+    it('should throw an error when passing less than two params.', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.deactivateUser();
+      });
+
+      assert.throws(function() {
+        rollout.deactivateUser('foo');
+      });
+
+    });
+
+    it('should deactivate a feature for a specific user', function(done) {
+      var rollout = Rollout.create();
+
+      rollout.deactivateUser('FooBar', 10).then(function() {
+        return rollout.isActiveUser('FooBar', 10);
+      }).then(function(enabled) {
+        assert.equal(enabled, false);
         done();
       });
     });

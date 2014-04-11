@@ -37,6 +37,42 @@ Rollout.create(); // New instance.
 
 You may pass a custom Redis client instance to both the constructor `new Rollout(redis)` or the `.create` method `Rollout.create(redis)`.
 
+If you don't pass a Redis client, Rollout will create one itself, defaulting to a local Redis server.
+
+### Active?
+
+(Note: Further examples with `rollout` are `Rollout` instances.)
+
+You can check if a feature is activated globally through:
+
+```js
+rollout.active('featureName').then(function(enabled) {
+	// ...
+});
+```
+
+As you can see, Rollout works exclusively with promises.
+
+### Specific Users
+
+You can specify a user to enable features against.
+
+```js
+rollout.active('feature', userId).then(function(enabled) {
+	// ...
+});
+```
+
+To enable feature(s) for specific users, you can use the `.activateUser` method.
+
+```js
+rollout.activateUser('newFeature', userId).then(function() {
+	// ...
+});
+```
+
+This activated the `newFeature` feature for the given user.
+
 
 ## License
 

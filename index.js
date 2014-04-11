@@ -116,7 +116,11 @@ Rollout.prototype.active = function(feature, id) {
 };
 
 /**
- * 
+ * Activate a feature for a given user.
+ *
+ * @param {String} feature
+ * @param {String/Integer} user
+ * @return {Promise}
  */
 
 Rollout.prototype.activateUser = function(feature, user) {
@@ -128,6 +132,33 @@ Rollout.prototype.activateUser = function(feature, user) {
 
   return new Promise(function(resolve, reject) {
     self.client.hset('rollout:user:' + user, feature, 'enabled', function(err) {
+      if (err) {
+        return reject(err);
+      }
+
+      resolve();
+    });
+  });
+};
+
+
+/**
+ * Deactive a feature for a given user.
+ *
+ * @param {String} feature
+ * @param {String/Integer} user
+ * @return {Promise}
+ */
+
+Rollout.prototype.deactivateUser = function(feature, user) {
+  var self = this;
+
+  if (arguments.length < 2) {
+    throw new Error(".activateUser() requires at least two parameters.");
+  }
+
+  return new Promise(function(resolve, reject) {
+    self.client.hset('rollout:user:' + user, feature, 'disabled', function(err) {
       if (err) {
         return reject(err);
       }
