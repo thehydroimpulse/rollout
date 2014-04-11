@@ -22,15 +22,67 @@ exports.create = function(redis) {
 function Rollout(client) {
   this.client = client || redis.createClient();
   this._id = 'id';
+  this._namespace = null;
   this.group('all', function(user) { return true; });
 }
 
 /**
  * Let Rollout know which key the id is on a user object.
+ *
+ * @param {String} id The key that defines the id of a user.
+ * @return {Rollout}
+ * @chainable
  */
 
 Rollout.prototype.id = function(id) {
   this._id = id;
+  return this;
+};
+
+/**
+ * Return the name of the key. This takes namespaces into account.
+ *
+ * @param {String} key
+ * @return {String}
+ */
+
+Rollout.prototype.name = function(key) {
+
+  if (!key) {
+    throw new Error("The key isn't defined. .name() requires a single parameter.");
+  }
+
+  if (this._namespace) {
+    key = this._namespace + ':' + key;
+  }
+
+  return key;
+};
+
+/**
+ * Define a new namespace. This is useful for keeping multiple Rollout instances
+ * while using the same Redis host.
+ *
+ * @param {String} name The namespace's name.
+ * @return {Rollout}
+ * @chainable
+ */
+
+Rollout.prototype.namespace = function(name) {
+
+  if (arguments.length != 1) {
+    throw new Error(".namespace() only expects a single parameter.");
+  }
+
+  if ('string' !== typeof name) {
+    throw new Error(".namespace() expected a string as it's first parameter.");
+  }
+
+  this._namespace = name;
+
+  // Redefine the :all group.
+  this.group('all', function(user) { return true; });
+
   return this;
 };
 

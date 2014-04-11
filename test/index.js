@@ -242,10 +242,10 @@ describe('rollout', function() {
     it('should add a member to the rollout:groups set', function(done) {
       var rollout = Rollout.create();
 
-      rollout.group('all', function(user) {
+      rollout.group('foobar', function(user) {
 
       }).then(function() {
-        rollout.client.sismember('rollout:groups', 'all', function(err, result) {
+        rollout.client.sismember('rollout:groups', 'foobar', function(err, result) {
           if (err) {
             return done(err);
           }
@@ -277,6 +277,92 @@ describe('rollout', function() {
       }, 10);
     });
 
+  });
+
+
+  describe('namespace', function() {
+    it('should define a .namespace() method', function() {
+      var rollout = Rollout.create();
+
+      assert.equal('function', typeof rollout.namespace);
+    });
+
+    it('should throw an error without any arguments', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.namespace();
+      }, Error);
+    });
+
+    it('should throw an error with too many arguments', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.namespace(1,2,3);
+      });
+    });
+
+    it('should throw if single param isn\'t a string', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.namespace(1);
+      });
+    });
+
+    it('should be a chainable method', function() {
+      var rollout = Rollout.create();
+
+      assert(rollout.namespace('foobar') instanceof Rollout);
+    });
+
+    it('should define the default "all" group with a namespace', function(done) {
+      var rollout = Rollout.create().namespace('foobar');
+
+      setTimeout(function() {
+        rollout.client.sismember('foobar:rollout:groups', 'all', function(err, result) {
+          if (err) {
+            return done(err);
+          }
+
+          if (result == '1') {
+            done();
+          } else {
+            return done(err);
+          }
+
+        });
+      }, 30);
+    });
+  });
+
+  describe('name', function() {
+    it('should define a .name() method', function() {
+      var rollout = Rollout.create();
+
+      assert.equal('function', typeof rollout.name);
+    });
+
+    it('should throw an error if the key isn\'t defined', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.name();
+      }, Error);
+    });
+
+    it('should return a string', function() {
+      var rollout = Rollout.create();
+
+      assert.equal('string', typeof rollout.name('foo'));
+    });
+
+    it('should return the name with a prepended namespace', function() {
+      var rollout = Rollout.create().namespace('faf');
+
+      assert.equal(rollout.name('heh'), 'faf:heh');
+    });
   });
 
 });
