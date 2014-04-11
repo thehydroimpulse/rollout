@@ -49,4 +49,57 @@ describe('rollout', function() {
     assert(rollout.active('foo') instanceof Promise);
   });
 
+  it('should return "disabled" when a feature hasn\'t been set', function(done) {
+    var rollout = Rollout.create();
+
+    rollout.active('foobar').then(function(result) {
+      assert.equal(result, false);
+      done();
+    });
+  });
+
+  it('should have a .isActiveUser() method', function() {
+    var rollout = Rollout.create();
+    assert.equal('function', typeof rollout.isActiveUser);
+  });
+
+  it('should throw an error when calling `isActiveUser` without arguments', function() {
+    var rollout = Rollout.create();
+
+    assert.throws(function() {
+      rollout.isActiveUser();
+    }, Error);
+
+    assert.throws(function() {
+      rollout.isActiveUser(1);
+    }, Error);
+
+    assert.throws(function() {
+      rollout.isActiveUser(1,2,3);
+    }, Error);
+  });
+
+  it('should throw an error when calling `isActive` without arguments', function() {
+    var rollout = Rollout.create();
+
+    assert.throws(function() {
+      rollout.isActive();
+    }, Error);
+  });
+
+  it('should be disabled when calling `.isActive` for the first time', function(done) {
+    var rollout = Rollout.create();
+
+    rollout.isActive('woot').then(function(enabled) {
+      assert.equal(enabled, false);
+      done();
+    });
+  });
+
+  it('should return a new promise when calling .isActiveUser()', function() {
+    var rollout = Rollout.create();
+
+    assert(rollout.isActiveUser('foobar123', 1) instanceof Promise);
+  });
+
 });

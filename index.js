@@ -24,6 +24,62 @@ function Rollout(client) {
 }
 
 /**
+ * Check globally whether a feature is activated or not.
+ *
+ * @param {String} feature
+ * @return {Promise}
+ */
+
+Rollout.prototype.isActive = function(feature) {
+  var self = this;
+
+  if (!feature) {
+    throw new Error("Expected 1 parameter for .isActive().");
+  }
+
+  return new Promise(function(resolve, reject) {
+    self.client.hget('rollout:global', feature, function(err, result) {
+      if (err) {
+        return reject(err);
+      }
+
+      if (result === 'enabled') {
+        return resolve(true);
+      } else {
+        return resolve(false);
+      }
+
+    });
+  });
+};
+
+/**
+ * Check whether a specific user has a feature enabled.
+ *
+ * @param {String} feature
+ * @param {String/Integer} id
+ */
+
+Rollout.prototype.isActiveUser = function(feature, id) {
+
+  var self = this;
+
+  if (arguments.length !== 2) {
+    throw new Error(".isActiveUser() requires two parameters.");
+  }
+
+  return new Promise(function(resolve, reject) {
+    self.client.hget('rollout:user:' + id, feature, function(err, result) {
+      if (!err) {
+        return reject(err);
+      }
+
+      console.log(result);
+    });
+  });
+};
+
+/**
  * Check whether a feature is activated or not. An optional user ID can be provided
  * to bind the feature to that user.
  *
@@ -42,24 +98,15 @@ Rollout.prototype.active = function(feature, id) {
     throw new Error("The .active() method needs at least a feature name as it's first parameter.");
   }
 
-  return new Promise(function(resolve, reject) {
-    self.client.hget('feature_rollout_global', feature, function(err, result) {
-      if (err) {
-        return reject(err);
+  if (arguments.length === 1) {
+    return this.isActive(feature);
+  } else {
+    return this.isActive(feature).then(function(enabled) {
+      if (enabled) {
+        return self.isActiveUser(feature, id);
       }
 
-      if (result == null) {
-        self.client.hset(['feature_status', feature, 'disabled'], function() {
-          return resolve(false);
-        })
-      }
-
-      if (result === 'enabled') {
-        return resolve(true);
-      } else {
-        return resolve(false);
-      }
-
+      return new Promise(function(resolve) { resolve(); });
     });
-  });
+  }
 };
