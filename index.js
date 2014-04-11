@@ -208,6 +208,8 @@ Rollout.prototype.group = function(name, fn) {
       if (err) {
         return reject(err);
       }
+
+      resolve();
     });
   });
 };

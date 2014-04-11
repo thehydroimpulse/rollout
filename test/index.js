@@ -239,6 +239,26 @@ describe('rollout', function() {
       }, Error);
     });
 
+    it('should add a member to the rollout:groups set', function(done) {
+      var rollout = Rollout.create();
+
+      rollout.group('all', function(user) {
+
+      }).then(function() {
+        rollout.client.sismember('rollout:groups', 'all', function(err, result) {
+          if (err) {
+            return done(err);
+          }
+
+          if (result == '1') {
+            done();
+          } else {
+            done(err);
+          }
+        });
+      });
+    });
+
   });
 
 });
