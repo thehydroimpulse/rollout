@@ -70,11 +70,15 @@ Rollout.prototype.isActiveUser = function(feature, id) {
 
   return new Promise(function(resolve, reject) {
     self.client.hget('rollout:user:' + id, feature, function(err, result) {
-      if (!err) {
+      if (err) {
         return reject(err);
       }
 
-      console.log(result);
+      if (result === 'enabled') {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
     });
   });
 };
@@ -109,4 +113,26 @@ Rollout.prototype.active = function(feature, id) {
       return new Promise(function(resolve) { resolve(); });
     });
   }
+};
+
+/**
+ * 
+ */
+
+Rollout.prototype.activateUser = function(feature, user) {
+  var self = this;
+
+  if (arguments.length < 2) {
+    throw new Error(".activateUser() requires at least two parameters.");
+  }
+
+  return new Promise(function(resolve, reject) {
+    self.client.hset('rollout:user:' + user, feature, 'enabled', function(err) {
+      if (err) {
+        return reject(err);
+      }
+
+      resolve();
+    });
+  });
 };
