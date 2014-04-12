@@ -80,4 +80,23 @@ describe('groups', function() {
 
   });
 
+  describe('.activate()', function() {
+
+    beforeEach(function() {
+      this.rollout = Rollout.create();
+      this.group   = Group.create('foo', this.rollout);
+    });
+
+    it('should define fn', function() {
+      assert.equal('function', typeof this.group.activate);
+    });
+
+    it('should throw an error without a feature name', function() {
+      assert.throws(function() {
+        this.group.activate();
+      }.bind(this));
+    });
+
+  });
+
 });

@@ -135,180 +135,37 @@ Rollout.prototype.isActiveUser = function(feature, id) {
  * @return {Promise}
  */
 
-Rollout.prototype.active = function(feature, user) {
+Rollout.prototype.active = function(feature) {
   var self = this;
-  var id   = user;
-
-  if (arguments.length === 0) {
-    throw new Error("The .active() method needs at least a feature name as it's first parameter.");
-  }
-
-  if ('object' === typeof user) {
-    id = user[this._id];
-  }
-
-  // We only need to check for the :all group.
-  if (!user) {
-    return this.activateGroup(feature, 'all');
-  }
   
-};
-
-/**
- * Activate a feature for a given user.
- *
- * @param {String} feature
- * @param {String/Integer} user
- * @return {Promise}
- */
-
-Rollout.prototype.activateUser = function(feature, user) {
-  var self = this;
-
-  if (arguments.length < 2) {
-    throw new Error(".activateUser() requires at least two parameters.");
+  if (arguments.length === 0) {
+    throw new Error("The .active() method needs a feature name as it's first parameter.");
   }
 
-  return new Promise(function(resolve, reject) {
-    var name = self.name('rollout:user:' + user);
-    self.client.hset(name, feature, 'enabled', function(err) {
-      if (err) {
-        return reject(err);
-      }
-
-      resolve();
-    });
-  });
-};
-
-
-/**
- * Deactive a feature for a given user.
- *
- * @param {String} feature
- * @param {String/Integer/Object} user
- * @return {Promise}
- */
-
-Rollout.prototype.deactivateUser = function(feature, user) {
-  var self = this;
-  var id   = user;
-
-  if (arguments.length < 2) {
-    throw new Error(".activateUser() requires at least two parameters.");
-  }
-
-  if ('object' === typeof user) {
-    id = user[this._id];
-  }
-
-  return new Promise(function(resolve, reject) {
-    var name = self.name('rollout:user:' + id);
-    self.client.hset(name, feature, 'disabled', function(err) {
-      if (err) {
-        return reject(err);
-      }
-
-      resolve();
-    });
-  });
+  return this.group('all').activate(feature);
 };
 
 /**
  * Define a new group.
  *
- * @param {String} group The group name.
+ * @param {String} name The group name.
  * @param {Function} fn Callback.
  */
 
-Rollout.prototype.group = function(group, fn) {
+Rollout.prototype.group = function(name, fn) {
   var self = this;
 
-  if (arguments.length !== 2) {
-    throw new Error(".group() expected 2 parameters.");
+  if (fn) {
+    if ('function' !== typeof fn) {
+      throw new Error("Expected .group()'s second param to be a function.");
+    }
+
+    var group = Group.create(name, this);
+    this._groups[name] = group;
+
+    self.client.sadd(self.name('rollout:groups'), name, function(err, result) {});
+    return group;
   }
 
-  if ('function' !== typeof fn) {
-    throw new Error("Expected .group()'s second param to be a function.");
-  }
-
-  this._groups[group] = fn;
-
-  return new Promise(function(resolve, reject) {
-    var name = self.name('rollout:groups');
-    self.client.sadd(name, group, function(err, result) {
-      if (err) {
-        return reject(err);
-      }
-
-      resolve();
-    });
-  });
-};
-
-/**
- * ActiveGroup
- */
-
-Rollout.prototype.activeGroup = function(feature, group) {
-
-};
-
-/**
- * Activate group
- */
-
-Rollout.prototype.activateGroup = function(feature, group) {
-  var self = this;
-
-  if (arguments.length !== 2) {
-    throw new Error(".activateGroup() requires two parameters.");
-  }
-
-  if ('string' !== typeof feature || 'string' !== typeof group) {
-    throw new Error("Expected the two parameters to be strings.");
-  }
-
-  if (!this._groups[group]) {
-    throw new Error('The group (' + group + ') has not been defined.');
-  }
-
-  return new Promise(function(resolve, reject) {
-    var name = self.name('rollout:groups:' + group);
-    self.client.sadd(name, feature, function(err, result) {
-      if (err) {
-        return reject(err);
-      }
-
-      resolve();
-    });
-  });
-};
-
-/**
- * Deactivate a single feature from a single group.
- *
- * @param {String} feature
- * @param {String} group
- * @return {Promise}
- */
-
-Rollout.prototype.deactivateGroup = function(feature, group) {
-  var self = this;
-
-  if (arguments.length !== 2) {
-    throw new Error(".deactivateGroup() expected two arguments.");
-  }
-
-  if ('string' !== typeof feature || 'string' !== typeof group) {
-    throw new Error(".deactivateGroup() expected two string arguments.");
-  }
-
-  if (!this._groups[group]) {
-    throw new Error('The group (' + group + ') doesn\'t exist.');
-  }
-
-  return new Promise(function(resolve, reject) {
-
-  });
+  return this._groups[name];  
 };
