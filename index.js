@@ -1,5 +1,6 @@
 var redis   = require('redis');
 var Promise = require('bluebird');
+var async   = require('async');
 var Group   = require('./lib/group');
 var User    = require('./lib/user');
 
@@ -150,14 +151,59 @@ Rollout.prototype.group = function(name, fn) {
 /**
  * Global feature deactivator
  *
- * @param {String} name Feature name.
+ * @param {String} feature Feature name.
  * @return {Promise}
  */
 
-Rollout.prototype.deactivate = function(name) {
+Rollout.prototype.deactivate = function(feature) {
   var self = this;
 
   return new Promise(function(resolve, reject) {
+    var name = self.name('rollout:users');
+    // Fetch all the users.
+    self.client.smembers(name, function(err, users) {
+      if (err) {
+        return reject(err);
+      }
 
+      var fns = [];
+
+      users.forEach(function(user) {
+        if (user == null) return cb();
+        fns.push(function(cb) {
+          self.client.srem(self.name('rollout:users:' + user), feature, function(err, result) {
+            cb(err);
+          });
+        });
+      });
+
+      async.parallel(fns, function(err, result) {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+  }).then(function() {
+
+    var fns    = [];
+
+    for(var key in self._groups) {
+      var group = self._groups[key];
+      fns.push(function(cb) {
+        var name = self.name('rollout:groups:' + group.name);
+        self.client.srem(name, feature, function(err, result) {
+          cb(err);
+        });
+      });
+    }
+
+    return new Promise(function(resolve, reject) {
+      async.parallel(fns, function(err, results) {
+        if (err) {
+          return reject(err);
+        }
+
+        resolve();
+      });
+    });
   });
 };
