@@ -61,6 +61,15 @@ describe('users', function() {
       });
     });
 
+    it('should check the all group for feature', function(done) {
+      this.rollout.group('all').activate('fromFoo123').then(function() {
+        this.rollout.user({ id: 1 }).active('fromFoo123').then(function(active) {
+          assert.equal(active, true);
+          done();
+        });
+      }.bind(this));
+    });
+
   });
 
   describe('.activate()', function() {
