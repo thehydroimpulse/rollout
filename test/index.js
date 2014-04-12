@@ -202,6 +202,11 @@ describe('rollout', function() {
       });
     });
 
+    it('should accept a user object', function(done) {
+      var rollout = Rollout.create();
+      rollout.deactivateUser('FooBar', { id: 55 }).then(done);
+    });
+
   });
 
 
