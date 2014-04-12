@@ -1,6 +1,8 @@
 var Rollout = require('..');
 var assert  = require('assert');
 var Promise = require('bluebird');
+var Group   = Rollout.Group;
+var User    = Rollout.User;
 
 describe('rollout', function() {
 
@@ -132,6 +134,26 @@ describe('rollout', function() {
       }, 10);
     });
 
+  });
+
+  describe('user', function() {
+    var rollout = Rollout.create();
+
+    it('should define a fn', function() {
+      assert.equal('function', typeof rollout.user);
+    });
+
+    it('should return an instance', function() {
+      assert(rollout.user({ id: 1 }) instanceof User);
+    });
+  });
+
+  describe('group', function() {
+    var rollout = Rollout.create();
+
+    it('should define a fn', function() {
+      assert.equal('function', typeof rollout.group);
+    });
   });
 
 
