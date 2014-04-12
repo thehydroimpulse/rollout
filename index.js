@@ -1,7 +1,9 @@
 var redis   = require('redis');
 var Promise = require('bluebird');
+var Group   = require('./lib/group');
 
 exports = module.exports = Rollout;
+exports.Group = Group;
 
 /**
  * An optional helper for creating a new Rollout instance.
@@ -89,36 +91,6 @@ Rollout.prototype.namespace = function(name) {
 };
 
 /**
- * Check globally whether a feature is activated or not.
- *
- * @param {String} feature
- * @return {Promise}
- */
-
-Rollout.prototype.isActive = function(feature) {
-  var self = this;
-
-  if (!feature) {
-    throw new Error("Expected 1 parameter for .isActive().");
-  }
-
-  return new Promise(function(resolve, reject) {
-    self.client.hget(self.name('rollout:global'), feature, function(err, result) {
-      if (err) {
-        return reject(err);
-      }
-
-      if (result === 'enabled') {
-        return resolve(true);
-      } else {
-        return resolve(false);
-      }
-
-    });
-  });
-};
-
-/**
  * Check whether a specific user has a feature enabled.
  *
  * @param {String} feature
@@ -159,27 +131,27 @@ Rollout.prototype.isActiveUser = function(feature, id) {
  * we can further check for the provided user, only if it's provided.
  *
  * @param {String} feature
- * @param {String/Integer} id
+ * @param {String/Integer/Object} user
  * @return {Promise}
  */
 
-Rollout.prototype.active = function(feature, id) {
+Rollout.prototype.active = function(feature, user) {
   var self = this;
+  var id   = user;
 
   if (arguments.length === 0) {
     throw new Error("The .active() method needs at least a feature name as it's first parameter.");
   }
 
-  // Check that the feature is globally enabled.
-  return this.isActive(feature).then(function(enabled) {
-    if (arguments.length === 1) {
-      if (enabled || enabled == null) {
-        return self.isActiveUser(feature, id);
-      }
-    }
+  if ('object' === typeof user) {
+    id = user[this._id];
+  }
 
-    return new Promise(function(resolve) { resolve(enabled); });
-  });
+  // We only need to check for the :all group.
+  if (!user) {
+    return this.activateGroup(feature, 'all');
+  }
+  
 };
 
 /**
@@ -272,6 +244,14 @@ Rollout.prototype.group = function(group, fn) {
       resolve();
     });
   });
+};
+
+/**
+ * ActiveGroup
+ */
+
+Rollout.prototype.activeGroup = function(feature, group) {
+
 };
 
 /**

@@ -67,7 +67,7 @@ describe('rollout', function() {
       assert(rollout.active('foo') instanceof Promise);
     });
 
-    it('should return "disabled" when a feature hasn\'t been set', function(done) {
+    it.skip('should return "disabled" when a feature hasn\'t been set', function(done) {
       var rollout = Rollout.create();
 
       rollout.active('foobar').then(function(result) {
@@ -106,37 +106,6 @@ describe('rollout', function() {
     });
 
   });
-
-  describe('.isActive()', function() {
-
-    it('should define an .isActive() method', function() {
-      var rollout = Rollout.create();
-      assert.equal('function', typeof rollout.isActive);
-    });
-
-    it('should throw an error when calling `isActive` without arguments', function() {
-      var rollout = Rollout.create();
-
-      assert.throws(function() {
-        rollout.isActive();
-      }, Error);
-    });
-
-    it('should be disabled when calling `.isActive` for the first time', function(done) {
-      var rollout = Rollout.create();
-
-      rollout.isActive('woot').then(function(enabled) {
-        assert.equal(enabled, false);
-        done();
-      });
-    });
-
-    it('should be enabled the second time', function() {
-      var rollout = Rollout.create();
-
-    });
-  });
-
 
   describe('activate user', function() {
     it('should define an .activateUser() method', function() {
