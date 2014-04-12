@@ -22,7 +22,7 @@ var Rollout = require('rollout');
 
 ## Getting Started
 
-Rollout is a Redis-backed feature rollout. This allows you to, dynamically, control each feature within your Node application. Because it's backed by Redis, it allows you to manually control each feature, resulting in an effort-less mechanism to shutdown malfunctioning features, or rolling out a new feature to users.
+Rollout is a Redis-backed feature rollout. This allows you to, dynamically, control each feature within your Node application. Because it's backed by Redis, it still allows you to scale as you please.
 
 ```js
 var Rollout = require('rollout');
@@ -43,49 +43,50 @@ If you don't pass a Redis client, Rollout will create one itself, defaulting to 
 
 (Note: Further examples with `rollout` are `Rollout` instances.)
 
-You can check if a feature is activated globally through:
+You can check if a feature is activated. Groups are explained below, however, a simple `.active` call will check the `all` group, which applies to *all* users.
 
 ```js
-rollout.active('featureName').then(function(enabled) {
+rollout.active('featureName').then(function(active) {
 	// ...
+  active; // true/false
 });
 ```
 
 As you can see, Rollout works exclusively with promises.
 
-### Specific Users
+## Groups
 
-You can specify a user to enable features against.
+Groups allow you, to, well, group users by specific critierias. These criterias are simply functions applied to a given user object that you can create.
+
+Rollout comes with a built-in `all` group, which applies to all users.
 
 ```js
-rollout.active('feature', userId).then(function(enabled) {
-	// ...
+rollout.group('all', function(user) {
+  return true;
 });
 ```
 
-To enable feature(s) for specific users, you can use the `.activateUser` method.
+The user object passed is completely agnostic. The only requirement is to specify a unique ID, which is defaulted to `id`.
 
 ```js
-rollout.activateUser('newFeature', userId).then(function() {
-	// ...
+rollout.id('_id');
+```
+
+You can check if a group has a feature activated:
+
+```js
+rollout.group('all').active('feature123').then(function(active) {
+  // ...
 });
 ```
 
-This activated the `newFeature` feature for the given user.
-
-
-Moreover, you may then deactivate a feature:
+And you can activate a feature:
 
 ```js
-rollout.deactivateUser('newFeature', userId).then(function() {
-	// ...
+rollout.group('all').activate('feature123').then(function() {
+  // ...
 });
 ```
-
-### Global
-
-For any method, Rollout checks the global feature first. If we find that feature enabled, we can further check the feature for that specific user (if one is given).
-
 
 ## License
 
