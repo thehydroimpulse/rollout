@@ -39,7 +39,7 @@ You may pass a custom Redis client instance to both the constructor `new Rollout
 
 If you don't pass a Redis client, Rollout will create one itself, defaulting to a local Redis server.
 
-### Active?
+### Active
 
 (Note: Further examples with `rollout` are `Rollout` instances.)
 
@@ -108,6 +108,16 @@ And verify:
 
 ```js
 rollout.user({ id: 5}).active('purchase').then(function(active) {
+  // ...
+});
+```
+
+## Deactivate
+
+If you want to deactivate a feature entirely, you can use the `deactivate` method.
+
+```js
+rollout.deactivate('brokenFeature').then(function() {
   // ...
 });
 ```
