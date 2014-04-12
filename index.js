@@ -91,39 +91,6 @@ Rollout.prototype.namespace = function(name) {
 };
 
 /**
- * Check whether a specific user has a feature enabled.
- *
- * @param {String} feature
- * @param {String/Integer} id
- */
-
-Rollout.prototype.isActiveUser = function(feature, id) {
-
-  var self = this;
-
-  if (arguments.length !== 2) {
-    throw new Error(".isActiveUser() requires two parameters.");
-  }
-
-  return new Promise(function(resolve, reject) {
-    var name = self.name('rollout:user:' + id);
-    self.client.hget(name, feature, function(err, result) {
-      if (err) {
-        return reject(err);
-      }
-
-      if (result === 'enabled') {
-        resolve(true);
-      } else if (result === 'disabled') {
-        resolve(false);
-      } else {
-        resolve(null);
-      }
-    });
-  });
-};
-
-/**
  * Check whether a feature is activated or not. An optional user ID can be provided
  * to bind the feature to that user.
  *
