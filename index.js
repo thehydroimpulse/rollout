@@ -1,9 +1,11 @@
 var redis   = require('redis');
 var Promise = require('bluebird');
 var Group   = require('./lib/group');
+var User    = require('./lib/user');
 
 exports = module.exports = Rollout;
 exports.Group = Group;
+exports.User  = User;
 
 /**
  * An optional helper for creating a new Rollout instance.
