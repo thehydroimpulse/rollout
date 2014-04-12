@@ -384,6 +384,24 @@ describe('rollout', function() {
       assert(rollout.activateGroup('feature', 'all') instanceof Promise);
     });
 
+    it('should add the feature to the group\'s set', function(done) {
+      var rollout = Rollout.create();
+
+      rollout.activateGroup('login', 'all').then(function() {
+        rollout.client.sismember(rollout.name('rollout:groups:all'), 'login', function(err, result) {
+          if (err) {
+            return done(err);
+          }
+
+          if (result === 1) {
+            done();
+          } else {
+            done(true);
+          }
+        });
+      });
+    });
+
   });
 
   describe('.name()', function() {
