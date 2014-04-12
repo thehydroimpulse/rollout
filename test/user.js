@@ -13,6 +13,20 @@ describe('users', function() {
     assert(User.create({}, 1) instanceof User);
   });
 
+  it('should add the user to the set', function(done) {
+    var rollout = Rollout.create();
+    User.create({id: 55}, rollout);
+
+    setTimeout(function() {
+      var name = rollout.name('rollout:users');
+      rollout.client.sismember(name, 55, function(err, result) {
+        result === 1
+          ? done()
+          : done(false);
+      });
+    }, 10);
+  });
+
   it('should throw without a params', function() {
     assert.throws(function() {
       User.create();
