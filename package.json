@@ -1,6 +1,6 @@
 {
   "name": "rollout",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "author": "Daniel Fagnan <dnfagnan@gmail.com>",
   "description": "A redis-backed feature rollout system.",
   "repository": {
