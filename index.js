@@ -115,6 +115,14 @@ Rollout.prototype.active = function(feature) {
 };
 
 /**
+ * User
+ */
+
+Rollout.prototype.user = function(user) {
+  return User.create(user, this);
+};
+
+/**
  * Define a new group.
  *
  * @param {String} name The group name.
