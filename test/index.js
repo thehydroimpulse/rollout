@@ -130,6 +130,11 @@ describe('rollout', function() {
         done();
       });
     });
+
+    it('should be enabled the second time', function() {
+      var rollout = Rollout.create();
+
+    });
   });
 
 
@@ -429,6 +434,55 @@ describe('rollout', function() {
       var rollout = Rollout.create().namespace('faf');
 
       assert.equal(rollout.name('heh'), 'faf:heh');
+    });
+  });
+
+  describe('deactivateGroup()', function() {
+
+    it('should define the method', function() {
+      var rollout = Rollout.create();
+
+      assert.equal('function', typeof rollout.deactivateGroup);
+    });
+
+    it('should return a promise', function() {
+      var rollout = Rollout.create();
+
+      assert(rollout.deactivateGroup('a', 'all') instanceof Promise);
+    });
+
+    it('should throw an error on invalid number of args.', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.deactivateGroup();
+      }, Error);
+
+
+      assert.throws(function() {
+        rollout.deactivateGroup('hello');
+      }, Error);
+
+
+      assert.throws(function() {
+        rollout.deactivateGroup('hello', 'two', 'four');
+      }, Error);
+    });
+
+    it('should throw an error if passed non-strings', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.deactivateGroup(1,2);
+      }, Error);
+    });
+
+    it('should throw an error if the group doesn\'t exist.', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.deactivateGroup('foo', 'bar123');
+      }, Error);
     });
   });
 

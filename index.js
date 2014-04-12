@@ -170,17 +170,16 @@ Rollout.prototype.active = function(feature, id) {
     throw new Error("The .active() method needs at least a feature name as it's first parameter.");
   }
 
-  if (arguments.length === 1) {
-    return this.isActive(feature);
-  } else {
-    return this.isActive(feature).then(function(enabled) {
+  // Check that the feature is globally enabled.
+  return this.isActive(feature).then(function(enabled) {
+    if (arguments.length === 1) {
       if (enabled || enabled == null) {
         return self.isActiveUser(feature, id);
       }
+    }
 
-      return new Promise(function(resolve) { resolve(); });
-    });
-  }
+    return new Promise(function(resolve) { resolve(enabled); });
+  });
 };
 
 /**
@@ -303,5 +302,33 @@ Rollout.prototype.activateGroup = function(feature, group) {
 
       resolve();
     });
+  });
+};
+
+/**
+ * Deactivate a single feature from a single group.
+ *
+ * @param {String} feature
+ * @param {String} group
+ * @return {Promise}
+ */
+
+Rollout.prototype.deactivateGroup = function(feature, group) {
+  var self = this;
+
+  if (arguments.length !== 2) {
+    throw new Error(".deactivateGroup() expected two arguments.");
+  }
+
+  if ('string' !== typeof feature || 'string' !== typeof group) {
+    throw new Error(".deactivateGroup() expected two string arguments.");
+  }
+
+  if (!this._groups[group]) {
+    throw new Error('The group (' + group + ') doesn\'t exist.');
+  }
+
+  return new Promise(function(resolve, reject) {
+
   });
 };
