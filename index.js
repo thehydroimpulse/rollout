@@ -101,7 +101,7 @@ Rollout.prototype.isActive = function(feature) {
   }
 
   return new Promise(function(resolve, reject) {
-    self.client.hget('rollout:global', feature, function(err, result) {
+    self.client.hget(self.name('rollout:global'), feature, function(err, result) {
       if (err) {
         return reject(err);
       }
@@ -132,7 +132,8 @@ Rollout.prototype.isActiveUser = function(feature, id) {
   }
 
   return new Promise(function(resolve, reject) {
-    self.client.hget('rollout:user:' + id, feature, function(err, result) {
+    var name = self.name('rollout:user:' + id);
+    self.client.hget(name, feature, function(err, result) {
       if (err) {
         return reject(err);
       }
@@ -196,7 +197,8 @@ Rollout.prototype.activateUser = function(feature, user) {
   }
 
   return new Promise(function(resolve, reject) {
-    self.client.hset('rollout:user:' + user, feature, 'enabled', function(err) {
+    var name = self.name('rollout:user:' + user);
+    self.client.hset(name, feature, 'enabled', function(err) {
       if (err) {
         return reject(err);
       }
@@ -228,7 +230,8 @@ Rollout.prototype.deactivateUser = function(feature, user) {
   }
 
   return new Promise(function(resolve, reject) {
-    self.client.hset('rollout:user:' + id, feature, 'disabled', function(err) {
+    var name = self.name('rollout:user:' + id);
+    self.client.hset(name, feature, 'disabled', function(err) {
       if (err) {
         return reject(err);
       }
@@ -241,11 +244,11 @@ Rollout.prototype.deactivateUser = function(feature, user) {
 /**
  * Define a new group.
  *
- * @param {String} name The group name.
+ * @param {String} group The group name.
  * @param {Function} fn Callback.
  */
 
-Rollout.prototype.group = function(name, fn) {
+Rollout.prototype.group = function(group, fn) {
   var self = this;
 
   if (arguments.length !== 2) {
@@ -257,12 +260,33 @@ Rollout.prototype.group = function(name, fn) {
   }
 
   return new Promise(function(resolve, reject) {
-    self.client.sadd('rollout:groups', name, function(err, result) {
+    var name = self.name('rollout:groups');
+    self.client.sadd(name, group, function(err, result) {
       if (err) {
         return reject(err);
       }
 
       resolve();
     });
+  });
+};
+
+/**
+ * Activate group
+ */
+
+Rollout.prototype.activateGroup = function(feature, group) {
+  var self = this;
+
+  if (arguments.length !== 2) {
+    throw new Error(".activateGroup() requires two parameters.");
+  }
+
+  if ('string' !== typeof feature || 'string' !== typeof group) {
+    throw new Error("Expected the two parameters to be strings.");
+  }
+
+  return new Promise(function(resolve, reject) {
+
   });
 };

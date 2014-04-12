@@ -337,7 +337,48 @@ describe('rollout', function() {
     });
   });
 
-  describe('name', function() {
+  describe('.activateGroup()', function() {
+
+    it('should define an .activateGroup() method', function() {
+      var rollout = Rollout.create();
+
+      assert.equal('function', typeof rollout.activateGroup);
+    });
+
+    it('should throw an error if missing parameters.', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.activateGroup();
+      }, Error);
+ 
+
+      assert.throws(function() {
+        rollout.activateGroup('foo');
+      }, Error);
+
+      assert.throws(function() {
+        rollout.activateGroup('foo', 'fah', 'foo');
+      }, Error);
+    });
+
+    it('should throw an error if the params aren\'t strings', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.activateGroup(123, 555);
+      });
+    });
+
+    it('should return a promise', function() {
+      var rollout = Rollout.create();
+
+      assert(rollout.activateGroup('feature', 'all') instanceof Promise);
+    });
+
+  });
+
+  describe('.name()', function() {
     it('should define a .name() method', function() {
       var rollout = Rollout.create();
 
