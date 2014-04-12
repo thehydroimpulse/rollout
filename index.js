@@ -146,3 +146,18 @@ Rollout.prototype.group = function(name, fn) {
 
   return this._groups[name];  
 };
+
+/**
+ * Global feature deactivator
+ *
+ * @param {String} name Feature name.
+ * @return {Promise}
+ */
+
+Rollout.prototype.deactivate = function(name) {
+  var self = this;
+
+  return new Promise(function(resolve, reject) {
+
+  });
+};

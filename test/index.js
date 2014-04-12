@@ -148,6 +148,18 @@ describe('rollout', function() {
     });
   });
 
+  describe('deactivate', function() {
+    var rollout = Rollout.create();
+
+    it('should define a fn', function() {
+      assert.equal('function', typeof rollout.deactivate);
+    });
+
+    it('should return a Promise', function() {
+      assert(rollout.deactivate('foo') instanceof Promise);
+    });
+  });
+
   describe('group', function() {
     var rollout = Rollout.create();
 
