@@ -370,6 +370,14 @@ describe('rollout', function() {
       });
     });
 
+    it('should throw an error if the group hasn\'t been defined', function() {
+      var rollout = Rollout.create();
+
+      assert.throws(function() {
+        rollout.activateGroup('feature', 'fooo');
+      }, Error);
+    });
+
     it('should return a promise', function() {
       var rollout = Rollout.create();
 

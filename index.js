@@ -20,9 +20,11 @@ exports.create = function(redis) {
  */
 
 function Rollout(client) {
-  this.client = client || redis.createClient();
-  this._id = 'id';
+  this.client     = client || redis.createClient();
+  this._id        = 'id';
   this._namespace = null;
+  this._groups    = {};
+
   this.group('all', function(user) { return true; });
 }
 
@@ -259,6 +261,8 @@ Rollout.prototype.group = function(group, fn) {
     throw new Error("Expected .group()'s second param to be a function.");
   }
 
+  this._groups[group] = fn;
+
   return new Promise(function(resolve, reject) {
     var name = self.name('rollout:groups');
     self.client.sadd(name, group, function(err, result) {
@@ -284,6 +288,10 @@ Rollout.prototype.activateGroup = function(feature, group) {
 
   if ('string' !== typeof feature || 'string' !== typeof group) {
     throw new Error("Expected the two parameters to be strings.");
+  }
+
+  if (!this._groups[group]) {
+    throw new Error('The group (' + group + ') has not been defined.');
   }
 
   return new Promise(function(resolve, reject) {
