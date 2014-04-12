@@ -72,10 +72,20 @@ describe('groups', function() {
     });
 
     it('should return false with new feature', function(done) {
-      this.group.active('foobar').then(function(enabled) {
+      this.group.active('foobarff').then(function(enabled) {
         assert.equal(enabled, false);
         done();
       });
+    });
+
+    it('should return true with existing feature', function(done) {
+      var name = this.rollout.name('rollout:groups:' + this.group.name);
+      this.rollout.client.sadd(name, 'foobar11', function(err) {
+        this.group.active('foobar11').then(function(enabled) {
+          assert.equal(enabled, true);
+          done();
+        });
+      }.bind(this));
     });
 
   });
