@@ -295,6 +295,13 @@ Rollout.prototype.activateGroup = function(feature, group) {
   }
 
   return new Promise(function(resolve, reject) {
+    var name = self.name('rollout:groups:' + group);
+    self.client.sadd(name, feature, function(err, result) {
+      if (err) {
+        return reject(err);
+      }
 
+      resolve();
+    });
   });
 };
