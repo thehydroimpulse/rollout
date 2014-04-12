@@ -43,6 +43,15 @@ describe('groups', function() {
       assert(group.fn(function() {}) instanceof Group);
     });
 
+    it('should throw if not a function', function() {
+      var rollout = Rollout.create();
+      var group   = Group.create('fivve', rollout);
+
+      assert.throws(function() {
+        group.fn(123);
+      });
+    });
+
   });
 
   describe('.active', function() {
@@ -60,6 +69,13 @@ describe('groups', function() {
       assert.throws(function() {
         this.group.active();
       }.bind(this));
+    });
+
+    it('should return false with new feature', function(done) {
+      this.group.active('foobar').then(function(enabled) {
+        assert.equal(enabled, false);
+        done();
+      });
     });
 
   });
