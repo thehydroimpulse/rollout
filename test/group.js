@@ -107,6 +107,19 @@ describe('groups', function() {
       }.bind(this));
     });
 
+    it('should return a promise', function() {
+      assert(this.group.activate('foo') instanceof Promise);
+    });
+
+    it('should activate a feature', function(done) {
+      this.group.activate('fivefooo123').then(function() {
+        this.group.active('fivefooo123').then(function(active) {
+          assert.equal(active, true);
+          done();
+        });
+      }.bind(this));
+    });
+
   });
 
 });
