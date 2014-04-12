@@ -47,7 +47,7 @@ You can check if a feature is activated. Groups are explained below, however, a 
 
 ```js
 rollout.active('featureName').then(function(active) {
-	// ...
+  // ...
   active; // true/false
 });
 ```
@@ -85,6 +85,58 @@ And you can activate a feature:
 ```js
 rollout.group('all').activate('feature123').then(function() {
   // ...
+});
+```
+
+## User
+
+Feature rollouts can also be user oriented. Thus, you can enable features on a per-user basis. If the user belongs to a group, whenever you check if a feature is enabled on the user, we'll also check the group(s).
+
+```js
+rollout.user({ id: 5 });
+```
+
+Let's activate a feature for the user.
+
+```js
+rollout.user({ id: 5 }).activate('purchase').then(function() {
+  // ...
+});
+```
+
+And verify:
+
+```js
+rollout.user({ id: 5}).active('purchase').then(function(active) {
+  // ...
+});
+```
+
+---
+
+## Advanced
+
+Let's define a new `admin` group.
+
+```js
+rollout.group('admin', function(user) {
+  return !!user.isAdmin;
+});
+```
+
+Now we can enable features for that group:
+
+```js
+rollout.group('admin').activate('user:delete').then(function() {
+  // ...
+});
+```
+
+Now we can check a user if they have access to this feature:
+
+```js
+rollout.user({ id: 10, isAdmin: false }).active('user:delete').then(function(active) {
+  active === false; // true
 });
 ```
 
